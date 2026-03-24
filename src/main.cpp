@@ -288,13 +288,31 @@ void setup()
 }
 
 int n = 0;
+unsigned long lastMillis = 0; // 记录上一次的时间
+float fps = 0;
+
 void loop()
 {
-  delay(1);
+  // --- 1. FPS 计算逻辑 ---
+  unsigned long currentMillis = millis();
+  unsigned long duration = currentMillis - lastMillis;
+  lastMillis = currentMillis;
+
+  // 防止除以 0，并计算 FPS
+  if (duration > 0)
+  {
+    fps = 1000.0 / duration;
+  }
+
+  // --- 2. 静态文字显示 (Math Forest) ---
   tft.setCursor(10, 10);
   tft.setTextColor(0x465DFF);
   tft.setTextSize(3);
   tft.print("Math Forest");
+
+  // --- 3. 动态文字显示 (Hello/Cherry) ---
+  // 注意：为了防止文字重叠，通常需要先用背景色画一个矩形覆盖旧文字
+  tft.fillRect(10, 200, 100, 20, 0x0000); // 假设背景是黑色
   tft.setCursor(10, 200);
   tft.setTextColor(0xFFFF);
   tft.setTextSize(2);
@@ -306,5 +324,15 @@ void loop()
   {
     tft.print("Cherry");
   }
+
+  // --- 4. FPS 实时显示 ---
+  tft.fillRect(10, 220, 120, 20, 0x0000); // 清除旧 FPS 区域
+  tft.setCursor(10, 220);
+  tft.setTextColor(0x07E0); // 绿色显示 FPS
+  tft.setTextSize(2);
+  tft.print("FPS: ");
+  tft.print(fps, 1); // 保留一位小数
+
   n++;
+  // delay(1); // 这里的 delay 会直接影响 FPS 的上限
 }
