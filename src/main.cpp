@@ -1,38 +1,65 @@
 #include <Arduino.h>
+#include <Adafruit_GFX.h>
 
 #define LCD_CS 4
 #define LCD_RS 7
 #define LCD_WR 6
 #define LCD_RD -1
 #define LCD_RST 5
+#define WR_MASK (1 << LCD_WR)
+#define RS_MASK (1 << LCD_RS)
+#define CS_MASK (1 << LCD_CS)
 
-// 数据总线 DB0-DB7 对应的 ESP32-S3 引脚 (根据你的 16 并口表格前 8 位)
-const int DB_PINS[] = {9, 10, 11, 12, 13, 14, 15, 16};
+// 数据线 GPIO9~16
+#define DATA_SHIFT 9
+#define DATA_MASK (0xFF << DATA_SHIFT)
 
-// --- 底层写操作 ---
-void inline writeBus(uint8_t val)
+// ====== 高速GPIO写 ======
+inline void writeBus(uint8_t val)
 {
-  // 8位模式：循环将数据位送入对应的 GPIO
-  for (int i = 0; i < 8; i++)
-  {
-    digitalWrite(DB_PINS[i], (val >> i) & 0x01);
-  }
-  digitalWrite(LCD_WR, LOW);
-  // 对于 ESP32-S3，主频很高，如果屏幕无反应，可以在此处加一个 delayMicroseconds(1);
-  delayMicroseconds(10);
-  digitalWrite(LCD_WR, HIGH);
+  uint32_t data = ((uint32_t)val << DATA_SHIFT);
+
+  GPIO.out_w1tc = DATA_MASK;
+  GPIO.out_w1ts = data;
+
+  GPIO.out_w1tc = WR_MASK;
+  GPIO.out_w1ts = WR_MASK;
 }
 
-void writeCmd(uint8_t cmd)
+inline void writeCmd(uint8_t cmd)
 {
-  digitalWrite(LCD_RS, LOW);
+  GPIO.out_w1tc = RS_MASK;
   writeBus(cmd);
 }
 
-void writeData(uint8_t data)
+inline void writeData(uint8_t data)
 {
-  digitalWrite(LCD_RS, HIGH);
+  GPIO.out_w1ts = RS_MASK;
   writeBus(data);
+}
+
+// ====== 设置窗口 ======
+void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+{
+  writeCmd(0x02);
+  writeData(x0 >> 8);
+  writeCmd(0x03);
+  writeData(x0);
+  writeCmd(0x04);
+  writeData(x1 >> 8);
+  writeCmd(0x05);
+  writeData(x1);
+
+  writeCmd(0x06);
+  writeData(y0 >> 8);
+  writeCmd(0x07);
+  writeData(y0);
+  writeCmd(0x08);
+  writeData(y1 >> 8);
+  writeCmd(0x09);
+  writeData(y1);
+
+  writeCmd(0x22);
 }
 
 // --- 初始化序列 (精准匹配商家 HX8347D 资料) ---
@@ -194,48 +221,90 @@ void Lcd_Init()
   digitalWrite(LCD_CS, HIGH);
 }
 
-void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+// ====== GFX驱动 ======
+class HX8347D : public Adafruit_GFX
 {
-  writeCmd(0x02);
-  writeData(x0 >> 8);
-  writeCmd(0x03);
-  writeData(x0 & 0xff);
-  writeCmd(0x04);
-  writeData(x1 >> 8);
-  writeCmd(0x05);
-  writeData(x1 & 0xff);
-  writeCmd(0x06);
-  writeData(y0 >> 8);
-  writeCmd(0x07);
-  writeData(y0 & 0xff);
-  writeCmd(0x08);
-  writeData(y1 >> 8);
-  writeCmd(0x09);
-  writeData(y1 & 0xff);
-  writeCmd(0x22); // Write Data to GRAM
-}
+public:
+  HX8347D() : Adafruit_GFX(240, 320) {}
 
+  void drawPixel(int16_t x, int16_t y, uint16_t color) override
+  {
+    if (x < 0 || y < 0 || x >= 240 || y >= 320)
+      return;
+
+    GPIO.out_w1tc = CS_MASK;
+
+    setAddrWindow(x, y, x, y);
+    writeData(color >> 8);
+    writeData(color);
+
+    GPIO.out_w1ts = CS_MASK;
+  }
+
+  // 🚀 超高速刷屏
+  void fillScreenFast(uint16_t color)
+  {
+    GPIO.out_w1tc = CS_MASK;
+
+    setAddrWindow(0, 0, 239, 319);
+
+    GPIO.out_w1ts = RS_MASK;
+
+    uint8_t hi = color >> 8;
+    uint8_t lo = color & 0xFF;
+
+    for (uint32_t i = 0; i < 240UL * 320; i++)
+    {
+      writeBus(hi);
+      writeBus(lo);
+    }
+
+    GPIO.out_w1ts = CS_MASK;
+  }
+};
+
+HX8347D tft;
+
+// ====== setup ======
 void setup()
 {
-  // 初始化所有引脚
-  for (int i = 0; i < 8; i++)
-    pinMode(DB_PINS[i], OUTPUT);
+  // 配置数据口
+  for (int i = 9; i <= 16; i++)
+    pinMode(i, OUTPUT);
+
   pinMode(LCD_CS, OUTPUT);
   pinMode(LCD_RS, OUTPUT);
   pinMode(LCD_WR, OUTPUT);
-  // LEDA 接 3.3V，无需代码控制
 
   Lcd_Init();
 
-  // 验屏：全屏刷绿色 (RGB565: 0x07E0)
-  digitalWrite(LCD_CS, LOW);
-  setAddrWindow(0, 0, 239, 319);
-  for (uint32_t i = 0; i < 240 * 320; i++)
-  {
-    writeData(0x07); // 高8位
-    writeData(0xE0); // 低8位
-  }
-  digitalWrite(LCD_CS, HIGH);
+  // 🚀 测试速度
+  uint32_t t = millis();
+
+  tft.fillScreenFast(0xF800); // 红
+
+  Serial.begin(115200);
+  Serial.println(millis() - t);
 }
 
-void loop() {}
+int n = 0;
+void loop()
+{
+  delay(1);
+  tft.setCursor(10, 10);
+  tft.setTextColor(0x465DFF);
+  tft.setTextSize(3);
+  tft.print("Math Forest");
+  tft.setCursor(10, 200);
+  tft.setTextColor(0xFFFF);
+  tft.setTextSize(2);
+  if (n % 2 == 0)
+  {
+    tft.print("Hello");
+  }
+  else
+  {
+    tft.print("Cherry");
+  }
+  n++;
+}
