@@ -9,19 +9,15 @@ build_flags =
     -DBOARD_HAS_PSRAM
     ;-mfix-esp32-psram-cache-issue
     ;-DSPI_FREQUENCY=40000000
-
-    ;-D ARDUINO_USB_CDC_ON_BOOT=1
-    ;-D ARDUINO_USB_MODE=1
-
-    ; -D CONFIG_TINYUSB_HOST_ENABLED=1
-    ; -D CONFIG_USB_HOST_HID_ENABLED=1
+    -D ARDUINO_USB_MODE=1
+    -D ARDUINO_USB_CDC_ON_BOOT=1
+    -D CONFIG_TINYUSB_HOST_ENABLED=1
+    -D CONFIG_USB_HOST_HID_ENABLED=1
 lib_deps =
     ;bodmer/TFT_eSPI
     adafruit/Adafruit GFX Library @ ^1.11.9
     ;earlephilhower/ESP8266Audio @ ^1.9.7
     esphome/ESP32-audioI2S@^2.3.0
     ;earlephilhower/ESP8266Audio @ ^1.9.7
-    ;tanakamasayuki/EspUsbHost
-    h2zero/NimBLE-Arduino @ ^1.4.1
 
 monitor_speed = 115200
