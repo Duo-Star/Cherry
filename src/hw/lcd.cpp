@@ -2,20 +2,6 @@
 #include <Adafruit_GFX.h>
 #include "lcd.h"
 
-// ====== LCD 引脚 ======
-#define LCD_CS 4
-#define LCD_RS 7
-#define LCD_WR 6
-#define LCD_RD -1
-#define LCD_RST 5
-#define WR_MASK (1 << LCD_WR)
-#define RS_MASK (1 << LCD_RS)
-#define CS_MASK (1 << LCD_CS)
-#define DATA_SHIFT 9
-#define DATA_MASK (0xFF << DATA_SHIFT)
-
-// ====== 高速 GPIO 写 ======
-
 // ====== 设置窗口 ======
 void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
@@ -38,16 +24,34 @@ void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
     writeCmd(0x22);
 }
 
+// ====== 全屏黑色填充（保留兼容性）======
 void rf_black()
 {
-    // 先刷黑色背景
     GPIO.out_w1tc = CS_MASK;
     setAddrWindow(0, 0, 239, 319);
     GPIO.out_w1ts = RS_MASK;
-    for (uint32_t i = 0; i < 240UL * 320; i++)
+    for (uint32_t i = 0; i < LCD_PIXELS; i++)
     {
         writeBus(0x00);
         writeBus(0x00);
+    }
+    GPIO.out_w1ts = CS_MASK;
+}
+
+// ====== 快速全屏填充 ======
+void fillScreenFast(uint16_t color)
+{
+    GPIO.out_w1tc = CS_MASK;
+    setAddrWindow(0, 0, LCD_WIDTH - 1, LCD_HEIGHT - 1);
+
+    GPIO.out_w1ts = RS_MASK;
+    uint8_t hi = color >> 8;
+    uint8_t lo = color & 0xFF;
+
+    for (uint32_t i = 0; i < LCD_PIXELS; i++)
+    {
+        writeBus(hi);
+        writeBus(lo);
     }
     GPIO.out_w1ts = CS_MASK;
 }

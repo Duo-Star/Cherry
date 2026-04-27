@@ -1,20 +1,20 @@
-#include "Audio.h"
+#include "bee.h"
 
-#define BEE 46 // 无源蜂鸣器
-
-// ── 蜂鸣器滴滴声（完全不碰 I2S）────────────────────────────────
-void play_beep(int freqHz, int durationMs)
-{
-    tone(BEE, freqHz, durationMs);
-    delay(durationMs + 20); // 等声音结束
-    noTone(BEE);
-}
-
+// ====== 蜂鸣器初始化 ======
 void bee_setup()
 {
-    pinMode(BEE, OUTPUT);
+    pinMode(BEE_PIN, OUTPUT);
 }
 
+// ====== 播放蜂鸣声 ======
+void play_beep(int freqHz, int durationMs)
+{
+    tone(BEE_PIN, freqHz, durationMs);
+    delay(durationMs + 20); // 等待声音结束
+    noTone(BEE_PIN);
+}
+
+// ====== 蜂鸣器自检 ======
 void bee_test()
 {
     // Serial.println("[Beep] 两短声...");
