@@ -453,6 +453,7 @@ void loop()
     canvas->setTextSize(2);
     canvas->print(n, 1);
     canvas->setCursor(10, 70);
+
     canvas->setTextSize(1);
     // canvas->setTextColor(0x660066); // 紫色
     canvas->print(R"(This is Cherry, a computer designed by Duo
