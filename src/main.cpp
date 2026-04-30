@@ -50,8 +50,8 @@ static bool IRAM_ATTR on_color_trans_done(
 
 // ╔══════════════════════════════════════════════════════════════╗
 // ║  DMACanvas                                                   ║
-// ║  继承 Adafruit_GFX，帧缓冲直接分配在 DMA-capable 内部 SRAM  ║
-// ║  pushCanvas 时 DMA 直接读这块内存，零拷贝                    ║
+// ║  继承 Adafruit_GFX，帧缓冲直接分配在 DMA-capable 内部 SRAM       ║
+// ║  pushCanvas 时 DMA 直接读这块内存，零拷贝                        ║
 // ╚══════════════════════════════════════════════════════════════╝
 class DMACanvas : public Adafruit_GFX
 {
@@ -604,7 +604,29 @@ void loop()
         "GitHub https://github.com/Duo-Star/Cherry\n"
         "Math Forest 663251235\n"
         "https://www.mduo.cloud/\n"
-        "https://x.com/Huluhuhululuhu\n");
+        "https://x.com/Huluhuhululuhu\n"
+        "This is Cherry, a computer designed by Duo\n"
+        "GitHub https://github.com/Duo-Star/Cherry\n"
+        "Math Forest 663251235\n"
+        "https://www.mduo.cloud/\n"
+        "https://x.com/Huluhuhululuhu\n"
+        "This is Cherry, a computer designed by Duo\n"
+        "GitHub https://github.com/Duo-Star/Cherry\n"
+        "Math Forest 663251235\n"
+        "https://www.mduo.cloud/\n"
+        "https://x.com/Huluhuhululuhu\n"
+        "This is Cherry, a computer designed by Duo\n"
+        "GitHub https://github.com/Duo-Star/Cherry\n"
+        "Math Forest 663251235\n"
+        "https://www.mduo.cloud/\n"
+        "https://x.com/Huluhuhululuhu\n"
+        "This is Cherry, a computer designed by Duo\n"
+        "GitHub https://github.com/Duo-Star/Cherry\n"
+        "Math Forest 663251235\n"
+        "https://www.mduo.cloud/\n"
+        "https://x.com/Huluhuhululuhu\n"
+
+    );
 
     // ③ 推送到屏幕
     //    优先试 pushCanvas()（全屏单次 DMA）
