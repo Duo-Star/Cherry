@@ -8,26 +8,26 @@
 // =========================================================================
 //  屏幕参数
 // =========================================================================
-#define LCD_WIDTH  240
+#define LCD_WIDTH 240
 #define LCD_HEIGHT 320
 
 // =========================================================================
 //  常用颜色 (RGB565)
 // =========================================================================
-#define LCD_BLACK       0x0000
-#define LCD_WHITE       0xFFFF
-#define LCD_RED         0xF800
-#define LCD_GREEN       0x07E0
-#define LCD_BLUE        0x001F
-#define LCD_CYAN        0x07FF
-#define LCD_MAGENTA     0xF81F
-#define LCD_YELLOW      0xFFE0
-#define LCD_ORANGE      0xFC00
-#define LCD_GRAY        0x8410
-#define LCD_DARK_GRAY   0x4208
+#define LCD_BLACK 0x0000
+#define LCD_WHITE 0xFFFF
+#define LCD_RED 0xF800
+#define LCD_GREEN 0x07E0
+#define LCD_BLUE 0x001F
+#define LCD_CYAN 0x07FF
+#define LCD_MAGENTA 0xF81F
+#define LCD_YELLOW 0xFFE0
+#define LCD_ORANGE 0xFC00
+#define LCD_GRAY 0x8410
+#define LCD_DARK_GRAY 0x4208
 
 // RGB888 → RGB565
-#define LCD_RGB565(r, g, b)  ((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
+#define LCD_RGB565(r, g, b) ((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
 
 // =========================================================================
 //  DMACanvas — 继承 Adafruit_GFX 的帧缓冲画布
@@ -66,18 +66,30 @@ public:
     {
         if ((uint16_t)y >= (uint16_t)LCD_HEIGHT || x >= LCD_WIDTH || w <= 0)
             return;
-        if (x < 0) { w += x; x = 0; }
-        if (x + w > LCD_WIDTH) w = LCD_WIDTH - x;
-        if (w <= 0) return;
+        if (x < 0)
+        {
+            w += x;
+            x = 0;
+        }
+        if (x + w > LCD_WIDTH)
+            w = LCD_WIDTH - x;
+        if (w <= 0)
+            return;
 
         uint16_t *p = buf + (uint16_t)y * LCD_WIDTH + x;
-        if (((uintptr_t)p & 2) && w) { *p++ = color; w--; }
+        if (((uintptr_t)p & 2) && w)
+        {
+            *p++ = color;
+            w--;
+        }
 
         uint32_t c32 = ((uint32_t)color << 16) | color;
         uint32_t *p32 = (uint32_t *)p;
         int n32 = w >> 1;
-        while (n32--) *p32++ = c32;
-        if (w & 1) *(uint16_t *)p32 = color;
+        while (n32--)
+            *p32++ = c32;
+        if (w & 1)
+            *(uint16_t *)p32 = color;
     }
 
     // ── 垂直线 ───────────────────────────────────────────────
@@ -85,23 +97,45 @@ public:
     {
         if ((uint16_t)x >= (uint16_t)LCD_WIDTH || y >= LCD_HEIGHT || h <= 0)
             return;
-        if (y < 0) { h += y; y = 0; }
-        if (y + h > LCD_HEIGHT) h = LCD_HEIGHT - y;
-        if (h <= 0) return;
+        if (y < 0)
+        {
+            h += y;
+            y = 0;
+        }
+        if (y + h > LCD_HEIGHT)
+            h = LCD_HEIGHT - y;
+        if (h <= 0)
+            return;
 
         uint16_t *p = buf + (uint16_t)y * LCD_WIDTH + x;
-        while (h--) { *p = color; p += LCD_WIDTH; }
+        while (h--)
+        {
+            *p = color;
+            p += LCD_WIDTH;
+        }
     }
 
     // ── 填充矩形（整行用 writeFastHLine 的 32-bit 路径）───
     void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) override
     {
-        if (x >= LCD_WIDTH || y >= LCD_HEIGHT || w <= 0 || h <= 0) return;
-        if (x < 0) { w += x; x = 0; }
-        if (y < 0) { h += y; y = 0; }
-        if (x + w > LCD_WIDTH)  w = LCD_WIDTH  - x;
-        if (y + h > LCD_HEIGHT) h = LCD_HEIGHT - y;
-        if (w <= 0 || h <= 0) return;
+        if (x >= LCD_WIDTH || y >= LCD_HEIGHT || w <= 0 || h <= 0)
+            return;
+        if (x < 0)
+        {
+            w += x;
+            x = 0;
+        }
+        if (y < 0)
+        {
+            h += y;
+            y = 0;
+        }
+        if (x + w > LCD_WIDTH)
+            w = LCD_WIDTH - x;
+        if (y + h > LCD_HEIGHT)
+            h = LCD_HEIGHT - y;
+        if (w <= 0 || h <= 0)
+            return;
 
         uint16_t *row = buf + (uint16_t)y * LCD_WIDTH + x;
         uint32_t c32 = ((uint32_t)color << 16) | color;
@@ -110,11 +144,17 @@ public:
         {
             uint16_t *p = row;
             int ww = w;
-            if (((uintptr_t)p & 2) && ww) { *p++ = color; ww--; }
+            if (((uintptr_t)p & 2) && ww)
+            {
+                *p++ = color;
+                ww--;
+            }
             uint32_t *p32 = (uint32_t *)p;
             int n32 = ww >> 1;
-            while (n32--) *p32++ = c32;
-            if (ww & 1) *(uint16_t *)p32 = color;
+            while (n32--)
+                *p32++ = c32;
+            if (ww & 1)
+                *(uint16_t *)p32 = color;
         }
     }
 
@@ -130,7 +170,8 @@ public:
         uint32_t c32 = ((uint32_t)color << 16) | color;
         uint32_t *p = (uint32_t *)buf;
         uint32_t n = (LCD_WIDTH * LCD_HEIGHT) >> 1;
-        while (n--) *p++ = c32;
+        while (n--)
+            *p++ = c32;
     }
 };
 
@@ -143,7 +184,7 @@ public:
 void lcd_init();
 
 // ── 状态查询 ──────────────────────────────────────────────────────────────
-float         lcd_get_fps();
+float lcd_get_fps();
 unsigned long lcd_get_frame_count();
 
 // ── 帧推送 ────────────────────────────────────────────────────────────────
@@ -152,40 +193,53 @@ void lcd_push();
 
 // ── 获取当前渲染画布 ──────────────────────────────────────────────────────
 // 返回引用可直接调用 Adafruit_GFX 全部方法（drawLine, print 等）
-DMACanvas& lcd_get_canvas();
+DMACanvas &lcd_get_canvas();
 
 // ── 基础图形快捷函数 ──────────────────────────────────────────────────────
 void lcd_clear(uint16_t color = LCD_BLACK);
+// 点
 void lcd_draw_pixel(int16_t x, int16_t y, uint16_t color);
+// 线条
 void lcd_draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
+// 水平/垂直线（优化填充矩形和字符背景的高频路径）
 void lcd_draw_fast_vline(int16_t x, int16_t y, int16_t h, uint16_t color);
 void lcd_draw_fast_hline(int16_t x, int16_t y, int16_t w, uint16_t color);
+// 矩形
 void lcd_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 void lcd_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+// 圆形
 void lcd_draw_circle(int16_t x, int16_t y, int16_t r, uint16_t color);
 void lcd_fill_circle(int16_t x, int16_t y, int16_t r, uint16_t color);
+// 三角形
 void lcd_draw_triangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                        int16_t x2, int16_t y2, uint16_t color);
 void lcd_fill_triangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                        int16_t x2, int16_t y2, uint16_t color);
+// 圆角矩形
 void lcd_draw_round_rect(int16_t x, int16_t y, int16_t w, int16_t h,
                          int16_t r, uint16_t color);
 void lcd_fill_round_rect(int16_t x, int16_t y, int16_t w, int16_t h,
                          int16_t r, uint16_t color);
 
 // ── 文字 ──────────────────────────────────────────────────────────────────
+//
 void lcd_set_cursor(int16_t x, int16_t y);
+// 前景色 / 背景色
 void lcd_set_text_color(uint16_t color);
 void lcd_set_text_color_bg(uint16_t fg, uint16_t bg);
+// 字体大小
 void lcd_set_text_size(uint8_t size);
+// 自动换行
 void lcd_set_text_wrap(bool wrap);
-void lcd_print(const char* text);
-void lcd_print_at(int16_t x, int16_t y, const char* text);
+// 打印字符串（当前位置，使用当前颜色/大小设置）
+void lcd_print(const char *text);
+// 在指定位置打印字符串（不改变当前 cursor 位置）
+void lcd_print_at(int16_t x, int16_t y, const char *text);
 
 // ── 位图 ──────────────────────────────────────────────────────────────────
-void lcd_draw_bitmap(int16_t x, int16_t y, const uint8_t* bitmap,
+void lcd_draw_bitmap(int16_t x, int16_t y, const uint8_t *bitmap,
                      int16_t w, int16_t h, uint16_t color);
-void lcd_draw_rgb_bitmap(int16_t x, int16_t y, const uint16_t* bitmap,
+void lcd_draw_rgb_bitmap(int16_t x, int16_t y, const uint16_t *bitmap,
                          int16_t w, int16_t h);
 
 #endif // HARDWARE_LCD_H
