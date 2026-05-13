@@ -13,7 +13,7 @@ void setup()
 
 void loop()
 {
-    DMACanvas &c = lcd_get_canvas();  // OK：完整类定义已在 lcd.h 中
+    DMACanvas &c = lcd_get_canvas(); // OK：完整类定义已在 lcd.h 中
 
     c.fillScreen(LCD_BLACK);
 
@@ -28,6 +28,14 @@ void loop()
     c.setTextSize(2);
     c.print(lcd_get_frame_count());
 
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            lcd_draw_circle(i * 24, j * 32, sin(lcd_get_frame_count() * 0.08 + i + j) * 10 + 15, LCD_BLUE);
+        }
+    }
+
     c.setCursor(10, 80);
     c.setTextSize(1);
     c.setTextColor(LCD_MAGENTA);
@@ -36,8 +44,7 @@ void loop()
         "GitHub https://github.com/Duo-Star/Cherry\n"
         "Math Forest 663251235\n"
         "https://www.mduo.cloud/\n"
-        "https://x.com/Huluhuhululuhu\n"
-    );
+        "https://x.com/Huluhuhululuhu\n");
 
     lcd_push();
 }

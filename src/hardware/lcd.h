@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
 #include "esp_heap_caps.h"
+#include "math_forest_lite/vec2.hpp"
 
 // =========================================================================
 //  屏幕参数
