@@ -199,27 +199,39 @@ DMACanvas &lcd_get_canvas();
 void lcd_clear(uint16_t color = LCD_BLACK);
 // 点
 void lcd_draw_pixel(int16_t x, int16_t y, uint16_t color);
+void lcd_draw_pixel_v(mf::Vec2 p, uint16_t color);
 // 线条
 void lcd_draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
+void lcd_draw_line_v(mf::Vec2 p0, mf::Vec2 p1, uint16_t color);
 // 水平/垂直线（优化填充矩形和字符背景的高频路径）
 void lcd_draw_fast_vline(int16_t x, int16_t y, int16_t h, uint16_t color);
+void lcd_draw_fast_vline_v(mf::Vec2 p, int16_t h, uint16_t color);
 void lcd_draw_fast_hline(int16_t x, int16_t y, int16_t w, uint16_t color);
+void lcd_draw_fast_hline_v(mf::Vec2 p, int16_t w, uint16_t color);
 // 矩形
 void lcd_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+void lcd_draw_rect_v(mf::Vec2 p, int16_t w, int16_t h, uint16_t color);
 void lcd_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+void lcd_fill_rect_v(mf::Vec2 p, int16_t w, int16_t h, uint16_t color);
 // 圆形
 void lcd_draw_circle(int16_t x, int16_t y, int16_t r, uint16_t color);
+void lcd_draw_circle_v(mf::Vec2 center, int16_t r, uint16_t color);
 void lcd_fill_circle(int16_t x, int16_t y, int16_t r, uint16_t color);
+void lcd_fill_circle_v(mf::Vec2 center, int16_t r, uint16_t color);
 // 三角形
 void lcd_draw_triangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                        int16_t x2, int16_t y2, uint16_t color);
+void lcd_draw_triangle_v(mf::Vec2 p0, mf::Vec2 p1, mf::Vec2 p2, uint16_t color);
 void lcd_fill_triangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                        int16_t x2, int16_t y2, uint16_t color);
+void lcd_fill_triangle_v(mf::Vec2 p0, mf::Vec2 p1, mf::Vec2 p2, uint16_t color);
 // 圆角矩形
 void lcd_draw_round_rect(int16_t x, int16_t y, int16_t w, int16_t h,
                          int16_t r, uint16_t color);
+void lcd_draw_round_rect_v(mf::Vec2 p, int16_t w, int16_t h, int16_t r, uint16_t color);
 void lcd_fill_round_rect(int16_t x, int16_t y, int16_t w, int16_t h,
                          int16_t r, uint16_t color);
+void lcd_fill_round_rect_v(mf::Vec2 p, int16_t w, int16_t h, int16_t r, uint16_t color);
 
 // ── 文字 ──────────────────────────────────────────────────────────────────
 //
@@ -235,6 +247,7 @@ void lcd_set_text_wrap(bool wrap);
 void lcd_print(const char *text);
 // 在指定位置打印字符串（不改变当前 cursor 位置）
 void lcd_print_at(int16_t x, int16_t y, const char *text);
+void lcd_print_at_v(mf::Vec2 p, const char *text);
 
 // ── 位图 ──────────────────────────────────────────────────────────────────
 void lcd_draw_bitmap(int16_t x, int16_t y, const uint8_t *bitmap,

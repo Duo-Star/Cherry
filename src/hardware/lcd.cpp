@@ -12,6 +12,7 @@
 #include "lcd.h"
 #include "esp_lcd_panel_io.h"
 #include "freertos/semphr.h"
+#include "math_forest_lite/vec2.hpp"
 
 // ─────────────────────────────────────────────────────────────
 //  引脚
@@ -426,68 +427,130 @@ void lcd_clear(uint16_t color)
     lcd_get_canvas().fillScreen(color);
 }
 
+// 像素
 void lcd_draw_pixel(int16_t x, int16_t y, uint16_t color)
 {
     lcd_get_canvas().drawPixel(x, y, color);
 }
+void lcd_draw_pixel_v(mf::Vec2 p, uint16_t color)
+{
+    lcd_get_canvas().drawPixel(p.x, p.y, color);
+}
 
+// 线段
 void lcd_draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
 {
     lcd_get_canvas().drawLine(x0, y0, x1, y1, color);
 }
+void lcd_draw_line_v(mf::Vec2 p0, mf::Vec2 p1, uint16_t color)
+{
+    lcd_get_canvas().drawLine(p0.x, p0.y, p1.x, p1.y, color);
+}
 
+// 垂直线
 void lcd_draw_fast_vline(int16_t x, int16_t y, int16_t h, uint16_t color)
 {
     lcd_get_canvas().drawFastVLine(x, y, h, color);
 }
+void lcd_draw_fast_vline_v(mf::Vec2 p, int16_t h, uint16_t color)
+{
+    lcd_get_canvas().drawFastVLine(p.x, p.y, h, color);
+}
 
+// 水平线
 void lcd_draw_fast_hline(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
     lcd_get_canvas().drawFastHLine(x, y, w, color);
 }
+void lcd_draw_fast_hline_v(mf::Vec2 p, int16_t w, uint16_t color)
+{
+    lcd_get_canvas().drawFastHLine(p.x, p.y, w, color);
+}
 
+// 矩形
 void lcd_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 {
     lcd_get_canvas().drawRect(x, y, w, h, color);
 }
+void lcd_draw_rect_v(mf::Vec2 p, int16_t w, int16_t h, uint16_t color)
+{
+    lcd_get_canvas().drawRect(p.x, p.y, w, h, color);
+}
 
+// 填充矩形
 void lcd_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 {
     lcd_get_canvas().fillRect(x, y, w, h, color);
 }
+void lcd_fill_rect_v(mf::Vec2 p, int16_t w, int16_t h, uint16_t color)
+{
+    lcd_get_canvas().fillRect(p.x, p.y, w, h, color);
+}
 
+// 圆形
 void lcd_draw_circle(int16_t x, int16_t y, int16_t r, uint16_t color)
 {
     lcd_get_canvas().drawCircle(x, y, r, color);
 }
+void lcd_draw_circle_v(mf::Vec2 p, int16_t r, uint16_t color)
+{
+    lcd_get_canvas().drawCircle(p.x, p.y, r, color);
+}
 
+// 填充圆形
 void lcd_fill_circle(int16_t x, int16_t y, int16_t r, uint16_t color)
 {
     lcd_get_canvas().fillCircle(x, y, r, color);
 }
+void lcd_fill_circle_v(mf::Vec2 p, int16_t r, uint16_t color)
+{
+    lcd_get_canvas().fillCircle(p.x, p.y, r, color);
+}
 
+// 三角形
 void lcd_draw_triangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                        int16_t x2, int16_t y2, uint16_t color)
 {
     lcd_get_canvas().drawTriangle(x0, y0, x1, y1, x2, y2, color);
 }
+void lcd_draw_triangle_v(mf::Vec2 p0, mf::Vec2 p1, mf::Vec2 p2, uint16_t color)
+{
+    lcd_get_canvas().drawTriangle(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, color);
+}
 
+// 填充三角形
 void lcd_fill_triangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                        int16_t x2, int16_t y2, uint16_t color)
 {
     lcd_get_canvas().fillTriangle(x0, y0, x1, y1, x2, y2, color);
 }
+void lcd_fill_triangle_v(mf::Vec2 p0, mf::Vec2 p1, mf::Vec2 p2, uint16_t color)
+{
+    lcd_get_canvas().fillTriangle(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, color);
+}
 
+// 圆角矩形
 void lcd_draw_round_rect(int16_t x, int16_t y, int16_t w, int16_t h,
                          int16_t r, uint16_t color)
 {
     lcd_get_canvas().drawRoundRect(x, y, w, h, r, color);
 }
+void lcd_draw_round_rect_v(mf::Vec2 p, int16_t w, int16_t h,
+                           int16_t r, uint16_t color)
+{
+    lcd_get_canvas().drawRoundRect(p.x, p.y, w, h, r, color);
+}
 
+// 填充圆角矩形
 void lcd_fill_round_rect(int16_t x, int16_t y, int16_t w, int16_t h,
                          int16_t r, uint16_t color)
 {
     lcd_get_canvas().fillRoundRect(x, y, w, h, r, color);
+}
+void lcd_fill_round_rect_v(mf::Vec2 p, int16_t w, int16_t h,
+                           int16_t r, uint16_t color)
+{
+    lcd_get_canvas().fillRoundRect(p.x, p.y, w, h, r, color);
 }
 
 // ── 文字 ─────────────────────────────────────────────────────
@@ -495,35 +558,50 @@ void lcd_set_cursor(int16_t x, int16_t y)
 {
     lcd_get_canvas().setCursor(x, y);
 }
+void lcd_set_cursor_v(mf::Vec2 p)
+{
+    lcd_get_canvas().setCursor(p.x, p.y);
+}
 
+// 字体颜色
 void lcd_set_text_color(uint16_t color)
 {
     lcd_get_canvas().setTextColor(color);
 }
 
+// 字体颜色（带背景）
 void lcd_set_text_color_bg(uint16_t fg, uint16_t bg)
 {
     lcd_get_canvas().setTextColor(fg, bg);
 }
 
+// 字体大小（1~8）
 void lcd_set_text_size(uint8_t size)
 {
     lcd_get_canvas().setTextSize(size);
 }
 
+// 字体换行
 void lcd_set_text_wrap(bool wrap)
 {
     lcd_get_canvas().setTextWrap(wrap);
 }
 
+// 打印文本
 void lcd_print(const char *text)
 {
     lcd_get_canvas().print(text);
 }
 
+// 在指定位置打印文本（不改变当前 cursor）
 void lcd_print_at(int16_t x, int16_t y, const char *text)
 {
     lcd_set_cursor(x, y);
+    lcd_get_canvas().print(text);
+}
+void lcd_print_at_v(mf::Vec2 p, const char *text)
+{
+    lcd_set_cursor(p.x, p.y);
     lcd_get_canvas().print(text);
 }
 
