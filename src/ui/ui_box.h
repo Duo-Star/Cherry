@@ -102,7 +102,7 @@ public:
     void render(const ClipRect &parent_clip);
 
     // 重写此方法绘制自定义内容（背景之后、子节点之前调用）
-    virtual void on_draw();
+    virtual void on_draw(const ClipRect &clip);
 
 protected:
     BoxCoord _x, _y, _w, _h;

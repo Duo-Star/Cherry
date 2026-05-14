@@ -165,7 +165,7 @@ void Box::render(const ClipRect &parent_clip)
     _draw_bg(clip);
 
     // 2) 自定义绘制（虚函数）
-    on_draw();
+    on_draw(clip);
 
     // 3) 递归子节点
     for (Box *child = _first_child; child; child = child->_next)
@@ -174,10 +174,7 @@ void Box::render(const ClipRect &parent_clip)
     }
 }
 
-void Box::on_draw()
-{
-    // 默认无操作
-}
+void Box::on_draw(const ClipRect &) { }
 
 void Box::_draw_bg(const ClipRect &clip)
 {
