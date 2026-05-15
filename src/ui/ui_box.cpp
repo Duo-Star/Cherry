@@ -2,20 +2,26 @@
 #include "esp_heap_caps.h"
 
 // =========================================================================
+//  全局动画时钟
+// =========================================================================
+float ui_time = 0.0f;
+
+void ui_tick(float dt)
+{
+    ui_time += dt;
+}
+
+// =========================================================================
 //  BoxCoord
 // =========================================================================
 int16_t BoxCoord::resolve(int16_t parent_size) const
 {
     switch (mode)
     {
-    case PIXEL:
-        return (int16_t)value;
-    case PERCENT:
-        return (int16_t)(value * parent_size);
-    case NEG_PIXEL:
-        return parent_size - (int16_t)value;
-    case NEG_PERCENT:
-        return (int16_t)(parent_size * (1.0f - value));
+    case PIXEL:       return (int16_t)value;
+    case PERCENT:     return (int16_t)(value * parent_size);
+    case NEG_PIXEL:   return parent_size - (int16_t)value;
+    case NEG_PERCENT: return (int16_t)(parent_size * (1.0f - value));
     }
     return 0;
 }
@@ -32,15 +38,13 @@ void ClipRect::intersect(const ClipRect &other)
 }
 
 // =========================================================================
-//  Box — PSRAM 分配
+//  Box
 // =========================================================================
 void *Box::operator new(size_t sz)
 {
-    void *ptr = heap_caps_malloc(sz, MALLOC_CAP_SPIRAM);// 分配到 PSRAM
+    void *ptr = heap_caps_malloc(sz, MALLOC_CAP_SPIRAM);
     if (!ptr)
-    {
         Serial.printf("[UI] FATAL: Box PSRAM alloc failed (%u bytes)\n", sz);
-    }
     return ptr;
 }
 
@@ -49,9 +53,6 @@ void Box::operator delete(void *ptr)
     if (ptr) heap_caps_free(ptr);
 }
 
-// =========================================================================
-//  Box — 构造 / 析构
-// =========================================================================
 Box::Box()
     : _x(0), _y(0), _w(1.0f), _h(1.0f)
     , _abs_x0(0), _abs_y0(0), _abs_x1(0), _abs_y1(0)
@@ -77,18 +78,13 @@ Box::~Box()
     }
 }
 
-// =========================================================================
-//  树结构
-// =========================================================================
 void Box::add_child(Box *child)
 {
     child->_parent = this;
     child->_next   = nullptr;
 
     if (!_first_child)
-    {
         _first_child = child;
-    }
     else
     {
         Box *tail = _first_child;
@@ -100,9 +96,7 @@ void Box::add_child(Box *child)
 void Box::remove_child(Box *child)
 {
     if (_first_child == child)
-    {
         _first_child = child->_next;
-    }
     else
     {
         Box *prev = _first_child;
@@ -113,9 +107,6 @@ void Box::remove_child(Box *child)
     child->_next   = nullptr;
 }
 
-// =========================================================================
-//  布局
-// =========================================================================
 void Box::set_pos(BoxCoord x, BoxCoord y)  { _x = x; _y = y; }
 void Box::set_size(BoxCoord w, BoxCoord h) { _w = w; _h = h; }
 
@@ -125,7 +116,6 @@ void Box::layout(int16_t parent_x0, int16_t parent_y0,
     int16_t pw = parent_x1 - parent_x0 + 1;
     int16_t ph = parent_y1 - parent_y0 + 1;
 
-    // 解析自己的绝对像素位置
     int16_t rx = _x.resolve(pw);
     int16_t ry = _y.resolve(ph);
     int16_t rw = _w.resolve(pw);
@@ -136,54 +126,40 @@ void Box::layout(int16_t parent_x0, int16_t parent_y0,
     _abs_x1 = _abs_x0 + rw - 1;
     _abs_y1 = _abs_y0 + rh - 1;
 
-    // 裁剪到父边界
     if (_abs_x0 < parent_x0) _abs_x0 = parent_x0;
     if (_abs_y0 < parent_y0) _abs_y0 = parent_y0;
     if (_abs_x1 > parent_x1) _abs_x1 = parent_x1;
     if (_abs_y1 > parent_y1) _abs_y1 = parent_y1;
 
-    // 递归布局子节点
     for (Box *child = _first_child; child; child = child->_next)
-    {
         child->layout(_abs_x0, _abs_y0, _abs_x1, _abs_y1);
-    }
 }
 
-// =========================================================================
-//  渲染
-// =========================================================================
-void Box::render(const ClipRect &parent_clip)
+void Box::render(const ClipRect &parent_clip, float t)
 {
     if (!_visible) return;
 
-    // 自身裁剪区 = 父裁剪 ∩ 自身矩形
     ClipRect clip = parent_clip;
     clip.intersect(abs_rect());
     if (!clip.valid()) return;
 
-    // 1) 背景
     _draw_bg(clip);
+    on_draw(clip, t);
 
-    // 2) 自定义绘制（虚函数）
-    on_draw(clip);
-
-    // 3) 递归子节点
     for (Box *child = _first_child; child; child = child->_next)
-    {
-        child->render(clip);
-    }
+        child->render(clip, t);
 }
 
-void Box::on_draw(const ClipRect &) { }
+void Box::on_draw(const ClipRect & /*clip*/, float /*t*/)
+{
+    // 默认无操作
+}
 
 void Box::_draw_bg(const ClipRect &clip)
 {
     if (!_has_bg) return;
-
     int16_t w = clip.width();
     int16_t h = clip.height();
     if (w > 0 && h > 0)
-    {
         lcd_fill_rect(clip.x0, clip.y0, w, h, _bg);
-    }
 }

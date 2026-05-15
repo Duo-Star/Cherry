@@ -1,10 +1,10 @@
 #include "ui_text.h"
 
-#define PAD 2   // 文字与框边界的像素间距
+#define PAD 2
 
 UIText::UIText(BoxCoord x, BoxCoord y, const char *text,
                uint16_t color, uint8_t size)
-    : Box(x, y, 0, 0)          // w/h 由 _recalc 填入
+    : Box(x, y, 0, 0)
     , _text(text)
     , _color(color)
     , _size(size)
@@ -31,7 +31,7 @@ void UIText::_recalc()
     set_size(BoxCoord(tw + PAD * 2), BoxCoord(th + PAD * 2));
 }
 
-void UIText::on_draw(const ClipRect & /*clip*/)
+void UIText::on_draw(const ClipRect & /*clip*/, float /*t*/)
 {
     if (!_text || !*_text) return;
 

@@ -1,31 +1,31 @@
 #include "ui_button.h"
-#include "ui_text.h" // ui_measure_text
-
-#define PAD 6 // 文字距按钮边界的间距（含边框空间）
+#include "ui_text.h"
+#define PAD 6
 
 UIButton::UIButton(BoxCoord x, BoxCoord y, const char *text,
                    bool *pressed, uint8_t size)
-    : Box(x, y, 0, 0), _text(text), _size(size), _state(false), _pressed_ptr(pressed)
-
-      // 默认配色
-      ,
+    : Box(x, y, 0, 0), _text(text), _size(size), _state(false), _pressed_ptr(pressed),
       _bg(LCD_BLACK), _press_bg(LCD_WHITE), _text_color(LCD_WHITE), _press_text_color(LCD_BLACK), _border_color(LCD_WHITE)
+
 {
     _recalc();
 }
 
+// 设置按钮文本
 void UIButton::set_text(const char *text)
 {
     _text = text;
     _recalc();
 }
 
+// 设置文本大小
 void UIButton::set_text_size(uint8_t size)
 {
     _size = size;
     _recalc();
 }
 
+// 设置颜色
 void UIButton::set_colors(uint16_t bg, uint16_t press_bg,
                           uint16_t text, uint16_t press_text,
                           uint16_t border)
@@ -44,9 +44,9 @@ void UIButton::_recalc()
     set_size(BoxCoord(tw + PAD * 2), BoxCoord(th + PAD * 2));
 }
 
-void UIButton::on_draw(const ClipRect & /*clip*/)
+void UIButton::on_draw(const ClipRect & /*clip*/, float /*t*/)
 {
-    bool down = pressed(); // 外部指针优先 → 内部状态兜底
+    bool down = pressed();
 
     int16_t x0 = _abs_x0;
     int16_t y0 = _abs_y0;
