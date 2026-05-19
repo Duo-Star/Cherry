@@ -1,7 +1,7 @@
 #ifndef UI_TADPOLE_H
 #define UI_TADPOLE_H
 
-#include "ui_box.h"
+#include "box.h"
 
 // =========================================================================
 //  UITadpole — 蝌蚪滑动条
@@ -21,19 +21,18 @@ public:
     void on_draw(const ClipRect &clip, float t) override;
 
 private:
-    float   *_value_ptr;
-    uint8_t  _size;
+    float *_value_ptr;
+    uint8_t _size;
 
-    uint16_t _passed_color;   // 已滑过轨道
-    uint16_t _remain_color;   // 未滑过轨道
+    uint16_t _passed_color; // 已滑过轨道
+    uint16_t _remain_color; // 未滑过轨道
     uint16_t _head_color;
 
-    int16_t _track_len()  const { return 80 * _size; }
-    int16_t _amplitude()  const { return 3 * _size; } // h
-    int16_t _head_r()     const { return 4 * _size; }
-    float   _freq()       const { return 3.0f; }      // 3 个完整周期
-    float   _phase_spd()  const { return 2.5f; }      // 相位滑动速度
-
+    int16_t _track_len() const { return 80 * _size; }
+    int16_t _amplitude() const { return 3 * _size; } // h
+    int16_t _head_r() const { return 4 * _size; }
+    float _freq() const { return 3.0f; }      // 3 个完整周期
+    float _phase_spd() const { return 2.5f; } // 相位滑动速度
 
     void _recalc();
     // 计算轨道上给定 x 对应的 y

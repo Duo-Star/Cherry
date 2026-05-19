@@ -1,12 +1,17 @@
 #ifndef UI_TEXT_H
 #define UI_TEXT_H
 
-#include "ui_box.h"
+#include "box.h"
 
 inline void ui_measure_text(const char *text, uint8_t size,
                             int16_t &w, int16_t &h)
 {
-    if (!text || !*text) { w = 0; h = 0; return; }
+    if (!text || !*text)
+    {
+        w = 0;
+        h = 0;
+        return;
+    }
     uint16_t len = strlen(text);
     w = (int16_t)len * 6 * size;
     h = 8 * size;
@@ -28,8 +33,8 @@ public:
 
 protected:
     const char *_text;
-    uint16_t    _color;
-    uint8_t     _size;
+    uint16_t _color;
+    uint8_t _size;
 
     void _recalc();
 };

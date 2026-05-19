@@ -1,13 +1,9 @@
-#include "ui_progress.h"
+#include "progress.h"
 
-#define PAD 4   // ← 与 Slider 统一
+#define PAD 4 // ← 与 Slider 统一
 
 UIProgress::UIProgress(BoxCoord x, BoxCoord y, float *value_ptr, uint8_t size)
-    : Box(x, y, 0, 0)
-    , _value_ptr(value_ptr)
-    , _size(size)
-    , _fill_color(LCD_WHITE)
-    , _bg_color(0x4208)
+    : Box(x, y, 0, 0), _value_ptr(value_ptr), _size(size), _fill_color(LCD_WHITE), _bg_color(0x4208)
 {
     _recalc();
 }
@@ -15,7 +11,7 @@ UIProgress::UIProgress(BoxCoord x, BoxCoord y, float *value_ptr, uint8_t size)
 void UIProgress::set_colors(uint16_t fill, uint16_t bg)
 {
     _fill_color = fill;
-    _bg_color   = bg;
+    _bg_color = bg;
 }
 
 void UIProgress::_recalc()
@@ -29,8 +25,10 @@ void UIProgress::_recalc()
 void UIProgress::on_draw(const ClipRect &, float)
 {
     float val = _value_ptr ? *_value_ptr : 0.0f;
-    if (val < 0.0f) val = 0.0f;
-    if (val > 1.0f) val = 1.0f;
+    if (val < 0.0f)
+        val = 0.0f;
+    if (val > 1.0f)
+        val = 1.0f;
 
     int16_t tl = _track_len();
     int16_t th = _track_h();

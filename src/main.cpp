@@ -11,16 +11,17 @@
  */
 
 #include "hardware/lcd.h"
-#include "ui/ui_box.h"
-#include "ui/ui_button.h"
-#include "ui/ui_canvas.h"
-#include "ui/ui_checkbox.h"
-#include "ui/ui_slider.h"
-#include "ui/ui_switch.h"
-#include "ui/ui_text.h"
-#include "ui/ui_progress.h"
-#include "ui/ui_loading.h"
-#include "ui/ui_tadpole.h"
+#include "ui/box.h"
+#include "ui/button.h"
+#include "ui/canvas.h"
+#include "ui/checkbox.h"
+#include "ui/slider.h"
+#include "ui/switch.h"
+#include "ui/text.h"
+#include "ui/progress.h"
+#include "ui/loading.h"
+#include "ui/tadpole.h"
+#include "ui/core.h"
 #include <Arduino.h>
 
 static Box *root = nullptr;
@@ -31,7 +32,8 @@ static UICheckBox *chk_ = nullptr;
 static float slider_val = 0.5f;
 
 // ── UICanvas 回调：4×4 棋盘格 ──────────────────────────
-static void chess_cb(UICanvas &cv, const ClipRect &, float) {
+static void chess_cb(UICanvas &cv, const ClipRect &, float)
+{
   int cw = cv.abs_w() / 4;
   int ch = cv.abs_h() / 4;
   for (int r = 0; r < 4; r++)
@@ -41,7 +43,8 @@ static void chess_cb(UICanvas &cv, const ClipRect &, float) {
 }
 
 // ── UICanvas 回调：实时 sin 曲线 ────────────────────────
-static void fn_draw(UICanvas &cv, const ClipRect &, float t) {
+static void fn_draw(UICanvas &cv, const ClipRect &, float t)
+{
   int ox = cv.abs_x(), oy = cv.abs_y();
   int w = cv.abs_w(), h = cv.abs_h();
   int mid_y = oy + h / 2;
@@ -52,7 +55,8 @@ static void fn_draw(UICanvas &cv, const ClipRect &, float t) {
 
   float amp = (h / 2.0f) * 0.8f;
   int prev_sx = -1, prev_sy = -1;
-  for (int i = 0; i < w; i++) {
+  for (int i = 0; i < w; i++)
+  {
     float x = (float)(i - w / 2);
     float angle = x * (4.0f * 3.14159f / (float)w);
     float y = sinf(angle + t * 1.5f) * amp;
@@ -64,7 +68,8 @@ static void fn_draw(UICanvas &cv, const ClipRect &, float t) {
   }
 }
 
-void setup() {
+void setup()
+{
   lcd_init();
 
   root = new Box(0, 0, (float)1.0f, (float)1.0f);
@@ -101,6 +106,9 @@ void setup() {
   // ── 加载指示器 ────────────────────────────
   root->add_child(new UILoading(200, 70, 1));
 
+  // --core--
+  root->add_child(new UICore(150, 70, 1));
+
   // ── 自定义画布 ───────────────────────────
   UICanvas *cv = new UICanvas(10, 170, 80, 80);
   cv->set_callback(chess_cb);
@@ -125,7 +133,8 @@ void setup() {
   Serial.println("[UI] All controls ready.");
 }
 
-void loop() {
+void loop()
+{
   // ── 时间步进 ─────────────────────────
   static unsigned long last_ms = 0;
   unsigned long now = millis();
@@ -139,7 +148,8 @@ void loop() {
     btn_down = !btn_down;
   if (frame % 90 == 0)
     sw->toggle();
-  if (frame % 80 == 0) {
+  if (frame % 80 == 0)
+  {
     chk->toggle();
     chk_->toggle();
   }

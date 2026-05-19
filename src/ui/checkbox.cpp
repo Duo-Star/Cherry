@@ -1,15 +1,9 @@
-#include "ui_checkbox.h"
+#include "checkbox.h"
 
 #define PAD 4
 
 UICheckBox::UICheckBox(BoxCoord x, BoxCoord y, uint8_t size)
-    : Box(x, y, 0, 0)
-    , _target(false)
-    , _current(false)
-    , _start_t(0)
-    , _size(size)
-    , _outline_color(LCD_WHITE)
-    , _fill_color(LCD_WHITE)
+    : Box(x, y, 0, 0), _target(false), _current(false), _start_t(0), _size(size), _outline_color(LCD_WHITE), _fill_color(LCD_WHITE)
 {
     _recalc();
 }
@@ -21,16 +15,17 @@ void UICheckBox::toggle()
 
 void UICheckBox::set_checked(bool on)
 {
-    if (_target == on && _start_t == 0) return;
-    _target  = on;
+    if (_target == on && _start_t == 0)
+        return;
+    _target = on;
     _start_t = ui_time;
 }
 
 void UICheckBox::set_checked_instant(bool on)
 {
-    _target   = on;
-    _current  = on;
-    _start_t  = 0;
+    _target = on;
+    _current = on;
+    _start_t = 0;
 }
 
 void UICheckBox::_recalc()
@@ -53,9 +48,9 @@ void UICheckBox::on_draw(const ClipRect & /*clip*/, float t)
     _draw_diamond_outline(cx, cy, ohw, ohh, _outline_color);
 
     // ── 动画更新 ──────────────────────────────────────
-    float inner_scale = 1.0f;     // 内菱形缩放比
-    float alpha        = 1.0f;    // 颜色混合系数 (1=fill, 0=bg)
-    bool  draw_inner   = _current;
+    float inner_scale = 1.0f; // 内菱形缩放比
+    float alpha = 1.0f;       // 颜色混合系数 (1=fill, 0=bg)
+    bool draw_inner = _current;
 
     if (_start_t > 0)
     {
@@ -64,8 +59,8 @@ void UICheckBox::on_draw(const ClipRect & /*clip*/, float t)
 
         if (p >= 1.0f)
         {
-            _start_t  = 0;
-            _current  = _target;
+            _start_t = 0;
+            _current = _target;
             draw_inner = _current;
             inner_scale = 1.0f;
         }
@@ -77,7 +72,7 @@ void UICheckBox::on_draw(const ClipRect & /*clip*/, float t)
             {
                 // 撑满阶段：0 → 撑满 (inner touches outer)
                 float sp = p / 0.65f;
-                inner_scale = sp * ((float)ohw / (float)ihw);  // 0 → outer/inner
+                inner_scale = sp * ((float)ohw / (float)ihw); // 0 → outer/inner
             }
             else
             {
@@ -86,7 +81,8 @@ void UICheckBox::on_draw(const ClipRect & /*clip*/, float t)
                 float overshoot = 1.0f + 0.3f * (1.0f - sp) * (1.0f - sp); // ease out
                 inner_scale = ((float)ohw / (float)ihw) + (1.0f - ((float)ohw / (float)ihw)) * sp;
                 // clamp to not overshoot below 1.0 too much
-                if (p > 0.9f) inner_scale = 1.0f;  // snap at end
+                if (p > 0.9f)
+                    inner_scale = 1.0f; // snap at end
             }
         }
         else
@@ -115,10 +111,14 @@ void UICheckBox::on_draw(const ClipRect & /*clip*/, float t)
         int16_t cw = (int16_t)((float)ihw * inner_scale);
         int16_t ch = (int16_t)((float)ihh * inner_scale);
         // clamp 不超过外菱形
-        if (cw > ohw - 1) cw = ohw - 1;
-        if (ch > ohh - 1) ch = ohh - 1;
-        if (cw < 1) cw = 1;
-        if (ch < 1) ch = 1;
+        if (cw > ohw - 1)
+            cw = ohw - 1;
+        if (ch > ohh - 1)
+            ch = ohh - 1;
+        if (cw < 1)
+            cw = 1;
+        if (ch < 1)
+            ch = 1;
 
         // 颜色插值
         uint16_t color;
@@ -130,7 +130,7 @@ void UICheckBox::on_draw(const ClipRect & /*clip*/, float t)
         {
             // 线性衰减到黑色
             uint8_t r = ((_fill_color >> 11) & 0x1F);
-            uint8_t g = ((_fill_color >> 5)  & 0x3F);
+            uint8_t g = ((_fill_color >> 5) & 0x3F);
             uint8_t b = (_fill_color & 0x1F);
             r = (uint8_t)((float)r * alpha);
             g = (uint8_t)((float)g * alpha);
@@ -148,10 +148,10 @@ void UICheckBox::_draw_diamond_outline(int16_t cx, int16_t cy,
                                        uint16_t color) const
 {
     // 顶点顺序：上 → 右 → 下 → 左 → 上
-    lcd_draw_line(cx, cy - hh, cx + hw, cy,       color);
-    lcd_draw_line(cx + hw, cy,       cx, cy + hh, color);
-    lcd_draw_line(cx, cy + hh, cx - hw, cy,       color);
-    lcd_draw_line(cx - hw, cy,       cx, cy - hh, color);
+    lcd_draw_line(cx, cy - hh, cx + hw, cy, color);
+    lcd_draw_line(cx + hw, cy, cx, cy + hh, color);
+    lcd_draw_line(cx, cy + hh, cx - hw, cy, color);
+    lcd_draw_line(cx - hw, cy, cx, cy - hh, color);
 }
 
 // ── 绘制实心菱形：两个三角形拼成 ────────────────────────

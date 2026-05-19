@@ -1,13 +1,10 @@
-#include "ui_text.h"
+#include "text.h"
 
 #define PAD 2
 
 UIText::UIText(BoxCoord x, BoxCoord y, const char *text,
                uint16_t color, uint8_t size)
-    : Box(x, y, 0, 0)
-    , _text(text)
-    , _color(color)
-    , _size(size)
+    : Box(x, y, 0, 0), _text(text), _color(color), _size(size)
 {
     _recalc();
 }
@@ -33,7 +30,8 @@ void UIText::_recalc()
 
 void UIText::on_draw(const ClipRect & /*clip*/, float /*t*/)
 {
-    if (!_text || !*_text) return;
+    if (!_text || !*_text)
+        return;
 
     lcd_set_text_color(_color);
     lcd_set_text_size(_size);

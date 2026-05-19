@@ -1,22 +1,19 @@
-#include "ui_slider.h"
+#include "slider.h"
 
 #define PAD 4
 
 UISlider::UISlider(BoxCoord x, BoxCoord y, float *value_ptr, uint8_t size)
-    : Box(x, y, 0, 0)
-    , _value_ptr(value_ptr)
-    , _size(size)
-    , _track_fill(LCD_WHITE)
-    , _track_bg(0x4208)    // dark gray
-    , _thumb_color(LCD_WHITE)
+    : Box(x, y, 0, 0), _value_ptr(value_ptr), _size(size), _track_fill(LCD_WHITE), _track_bg(0x4208) // dark gray
+      ,
+      _thumb_color(LCD_WHITE)
 {
     _recalc();
 }
 
 void UISlider::set_colors(uint16_t track_fill, uint16_t track_bg, uint16_t thumb)
 {
-    _track_fill  = track_fill;
-    _track_bg    = track_bg;
+    _track_fill = track_fill;
+    _track_bg = track_bg;
     _thumb_color = thumb;
 }
 
@@ -34,12 +31,14 @@ void UISlider::_recalc()
 void UISlider::on_draw(const ClipRect & /*clip*/, float /*t*/)
 {
     float val = _value_ptr ? *_value_ptr : 0.0f;
-    if (val < 0.0f) val = 0.0f;
-    if (val > 1.0f) val = 1.0f;
+    if (val < 0.0f)
+        val = 0.0f;
+    if (val > 1.0f)
+        val = 1.0f;
 
-    int16_t dw  = _diamond_w();
-    int16_t dh  = _diamond_h();
-    int16_t tl  = _track_len();
+    int16_t dw = _diamond_w();
+    int16_t dh = _diamond_h();
+    int16_t tl = _track_len();
     int16_t tth = _track_thick();
 
     // 轨道 Y 居中

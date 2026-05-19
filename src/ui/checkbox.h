@@ -1,7 +1,7 @@
 #ifndef UI_CHECKBOX_H
 #define UI_CHECKBOX_H
 
-#include "ui_box.h"
+#include "box.h"
 
 // =========================================================================
 //  UICheckBox
@@ -26,18 +26,20 @@ public:
 
     void set_color(uint16_t outline, uint16_t fill);
     void set_colors(uint16_t outline, uint16_t fill)
-    { set_color(outline, fill); }
+    {
+        set_color(outline, fill);
+    }
 
     void on_draw(const ClipRect &clip, float t) override;
 
 private:
-    bool    _target;        // 目标状态
-    bool    _current;       // 当前显示状态
-    float   _start_t;       // 动画开始时间
+    bool _target;   // 目标状态
+    bool _current;  // 当前显示状态
+    float _start_t; // 动画开始时间
     uint8_t _size;
 
-    uint16_t _outline_color;   // 线框颜色
-    uint16_t _fill_color;      // 内菱形颜色
+    uint16_t _outline_color; // 线框颜色
+    uint16_t _fill_color;    // 内菱形颜色
 
     static constexpr float ANIM_DUR = 0.25f;
 

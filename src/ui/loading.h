@@ -1,7 +1,7 @@
 #ifndef UI_LOADING_H
 #define UI_LOADING_H
 
-#include "ui_box.h"
+#include "box.h"
 
 // =========================================================================
 //  UILoading — 加载旋转指示器
@@ -19,13 +19,13 @@ public:
     void on_draw(const ClipRect &clip, float t) override;
 
 private:
-    uint8_t  _size;
+    uint8_t _size;
     uint16_t _track_color;
     uint16_t _arc_color;
 
     int16_t _outer_r() const { return 10 * _size; }
     int16_t _inner_r() const { return _outer_r() - 1.3 * _size; }
-    float   _arc_len() const { return 1.3f; }
+    float _arc_len() const { return 1.3f; }
 
     void _recalc();
     void _draw_thick_arc(int16_t cx, int16_t cy,

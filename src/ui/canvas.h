@@ -1,7 +1,7 @@
 #ifndef UI_CANVAS_H
 #define UI_CANVAS_H
 
-#include "ui_box.h"
+#include "box.h"
 
 class UICanvas;
 

@@ -1,18 +1,11 @@
-#include "ui_switch.h"
+#include "switch.h"
 
 #define PAD 4
 
 UISwitch::UISwitch(BoxCoord x, BoxCoord y, uint8_t size)
-    : Box(x, y, 0, 0)
-    , _target_on(false)
-    , _current_on(false)
-    , _start_t(0)
-    , _thumb_x(0)
-    , _size(size)
-    , _on_track(LCD_WHITE)
-    , _on_thumb(LCD_WHITE)
-    , _off_track(0x4208)   // dark gray
-    , _off_thumb(0x8410)   // gray
+    : Box(x, y, 0, 0), _target_on(false), _current_on(false), _start_t(0), _thumb_x(0), _size(size), _on_track(LCD_WHITE), _on_thumb(LCD_WHITE), _off_track(0x4208) // dark gray
+      ,
+      _off_thumb(0x8410) // gray
 {
     _recalc();
 }
@@ -24,7 +17,8 @@ void UISwitch::toggle()
 
 void UISwitch::set_on(bool on)
 {
-    if (_target_on == on && _start_t == 0) return;  // 已经在目标状态且不在动画中
+    if (_target_on == on && _start_t == 0)
+        return; // 已经在目标状态且不在动画中
 
     _target_on = on;
 
@@ -35,20 +29,20 @@ void UISwitch::set_on(bool on)
 
 void UISwitch::set_on_instant(bool on)
 {
-    _target_on  = on;
+    _target_on = on;
     _current_on = on;
-    _start_t    = 0;
-    _thumb_x    = _target_thumb_x();
+    _start_t = 0;
+    _thumb_x = _target_thumb_x();
     // layout 之后 _thumb_x 才有效，延迟到 on_draw 中处理
 }
 
-void UISwitch::set_colors(uint16_t on_track,  uint16_t on_thumb,
+void UISwitch::set_colors(uint16_t on_track, uint16_t on_thumb,
                           uint16_t off_track, uint16_t off_thumb)
 {
-    _on_track   = on_track;
-    _on_thumb   = on_thumb;
-    _off_track  = off_track;
-    _off_thumb  = off_thumb;
+    _on_track = on_track;
+    _on_thumb = on_thumb;
+    _off_track = off_track;
+    _off_thumb = off_thumb;
 }
 
 void UISwitch::_recalc()
@@ -67,8 +61,8 @@ void UISwitch::_recalc()
 
 float UISwitch::_target_thumb_x() const
 {
-    int16_t dw  = _diamond_w();
-    int16_t tl  = _track_len();
+    int16_t dw = _diamond_w();
+    int16_t tl = _track_len();
 
     // 轨道左端 X（屏幕坐标）
     float track_x0 = (float)(_abs_x0 + PAD + dw / 2);
@@ -86,9 +80,9 @@ void UISwitch::on_draw(const ClipRect & /*clip*/, float t)
         if (elapsed >= ANIM_DURATION)
         {
             // 动画完成
-            _start_t    = 0;
+            _start_t = 0;
             _current_on = _target_on;
-            _thumb_x    = _target_thumb_x();
+            _thumb_x = _target_thumb_x();
         }
         else
         {
@@ -100,8 +94,8 @@ void UISwitch::on_draw(const ClipRect & /*clip*/, float t)
             // 否则从 _target_thumb_x() 的反方向计算
 
             float from_x = _target_on
-                ? (float)(_abs_x0 + PAD + _diamond_w() / 2)                         // 从左端开始
-                : (float)(_abs_x0 + PAD + _diamond_w() / 2 + _track_len());         // 从右端开始
+                               ? (float)(_abs_x0 + PAD + _diamond_w() / 2)                 // 从左端开始
+                               : (float)(_abs_x0 + PAD + _diamond_w() / 2 + _track_len()); // 从右端开始
 
             float to_x = _target_thumb_x();
 
@@ -112,7 +106,7 @@ void UISwitch::on_draw(const ClipRect & /*clip*/, float t)
     {
         // 初始帧：_start_t 还没被 set（构造函数中）
         _current_on = _target_on;
-        _thumb_x    = _target_thumb_x();
+        _thumb_x = _target_thumb_x();
     }
 
     // ── 确定颜色 ─────────────────────────────────────────
@@ -129,14 +123,14 @@ void UISwitch::on_draw(const ClipRect & /*clip*/, float t)
         show_on = _current_on;
     }
 
-    uint16_t track_color = show_on ? _on_track  : _off_track;
-    uint16_t thumb_color = show_on ? _on_thumb  : _off_thumb;
+    uint16_t track_color = show_on ? _on_track : _off_track;
+    uint16_t thumb_color = show_on ? _on_thumb : _off_thumb;
 
     // ── 绘制轨道 ─────────────────────────────────────────
-    int16_t tl  = _track_len();
+    int16_t tl = _track_len();
     int16_t tth = _track_thick();
-    int16_t dw  = _diamond_w();
-    int16_t dh  = _diamond_h();
+    int16_t dw = _diamond_w();
+    int16_t dh = _diamond_h();
 
     int16_t track_x0 = _abs_x0 + PAD + dw / 2;
     int16_t track_y0 = _abs_y0 + abs_h() / 2 - tth / 2;

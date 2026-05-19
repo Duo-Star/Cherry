@@ -1,5 +1,5 @@
-#include "ui_button.h"
-#include "ui_text.h"
+#include "button.h"
+#include "text.h"
 #define PAD 6
 
 UIButton::UIButton(BoxCoord x, BoxCoord y, const char *text,

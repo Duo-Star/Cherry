@@ -1,7 +1,7 @@
 #ifndef UI_SLIDER_H
 #define UI_SLIDER_H
 
-#include "ui_box.h"
+#include "box.h"
 
 // =========================================================================
 //  UISlider
@@ -21,18 +21,18 @@ public:
     void on_draw(const ClipRect &clip, float t) override;
 
 private:
-    float   *_value_ptr;
-    uint8_t  _size;
+    float *_value_ptr;
+    uint8_t _size;
 
-    uint16_t _track_fill;   // 已滑动部分
-    uint16_t _track_bg;     // 未滑动部分
+    uint16_t _track_fill; // 已滑动部分
+    uint16_t _track_bg;   // 未滑动部分
     uint16_t _thumb_color;
 
     // 尺寸（基于 _size）
-    int16_t _track_len()   const { return 80 * _size; }
+    int16_t _track_len() const { return 80 * _size; }
     int16_t _track_thick() const { return 4 * _size; }
-    int16_t _diamond_w()   const { return 14 * _size; }
-    int16_t _diamond_h()   const { return 14 * _size; }
+    int16_t _diamond_w() const { return 14 * _size; }
+    int16_t _diamond_h() const { return 14 * _size; }
 
     void _recalc();
     void _draw_diamond(int16_t cx, int16_t cy, uint16_t color) const;

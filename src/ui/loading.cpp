@@ -1,13 +1,10 @@
-#include "ui_loading.h"
+#include "loading.h"
 #include <math.h>
 
 #define PAD 4
 
 UILoading::UILoading(BoxCoord x, BoxCoord y, uint8_t size)
-    : Box(x, y, 0, 0)
-    , _size(size)
-    , _track_color(0x4208)
-    , _arc_color(LCD_WHITE)
+    : Box(x, y, 0, 0), _size(size), _track_color(0x4208), _arc_color(LCD_WHITE)
 {
     _recalc();
 }
@@ -15,7 +12,7 @@ UILoading::UILoading(BoxCoord x, BoxCoord y, uint8_t size)
 void UILoading::set_colors(uint16_t track, uint16_t arc)
 {
     _track_color = track;
-    _arc_color   = arc;
+    _arc_color = arc;
 }
 
 void UILoading::_recalc()
@@ -36,8 +33,8 @@ void UILoading::on_draw(const ClipRect &, float t)
         lcd_draw_circle(cx, cy, r, _track_color);
 
     // ── 白色弧段（匀速旋转）───────────────────────
-    float start_a = t * 4.0f;               // 角速度 4 rad/s
-    float end_a   = start_a + _arc_len();
+    float start_a = t * 4.0f; // 角速度 4 rad/s
+    float end_a = start_a + _arc_len();
 
     _draw_thick_arc(cx, cy, start_a, end_a, _arc_color);
 }
@@ -53,7 +50,8 @@ void UILoading::_draw_thick_arc(int16_t cx, int16_t cy,
     for (int16_t r = ri; r <= ro; r++)
     {
         int steps = (int)((end_a - start_a) * (float)r * 2);
-        if (steps < 8) steps = 8;
+        if (steps < 8)
+            steps = 8;
 
         int16_t px = -1, py = -1;
         for (int i = 0; i <= steps; i++)
@@ -63,7 +61,8 @@ void UILoading::_draw_thick_arc(int16_t cx, int16_t cy,
             int16_t y = cy + (int16_t)((float)r * sinf(a));
             if (px >= 0)
                 lcd_draw_line(px, py, x, y, color);
-            px = x; py = y;
+            px = x;
+            py = y;
         }
     }
 }

@@ -1,7 +1,7 @@
 #ifndef UI_SWITCH_H
 #define UI_SWITCH_H
 
-#include "ui_box.h"
+#include "box.h"
 
 // =========================================================================
 //  UISwitch — 拨动开关
