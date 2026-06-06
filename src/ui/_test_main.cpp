@@ -71,7 +71,7 @@ static void fn_draw(UICanvas &cv, const ClipRect &, float t)
   }
 }
 
-void setup()
+void setup_()
 {
   lcd_init();
 
@@ -136,7 +136,7 @@ void setup()
   Serial.println("[UI] All controls ready.");
 }
 
-void loop()
+void loop_()
 {
   // ── 时间步进 ─────────────────────────
   static unsigned long last_ms = 0;
